@@ -288,7 +288,7 @@ class SimulationApp:
                     f"{result['final_velocity']:.2f}"
                 ))
 
-            self.ax.legend(loc='upper right')
+            self.ax.legend([f'dt={dt}' for dt in steps], loc='upper right')
             self.canvas.draw()
 
         except ValueError:
@@ -297,4 +297,5 @@ class SimulationApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = SimulationApp(root)
+
     root.mainloop()
