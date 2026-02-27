@@ -5,10 +5,11 @@
 
 Выполнить моделирование с различными шагами по времени и по пространству.  
 Заполнить таблицу значений температуры в центральной точке пластины после 2 секунд модельного времени.
+
 ---
 <img width="1407" height="510" alt="image" src="https://github.com/user-attachments/assets/1bdd77a1-78d8-4ae2-ab19-419d0d44db31" />
 
-<img width="1419" height="509" alt="image" src="https://github.com/user-attachments/assets/6448955c-3b61-4e47-824d-2efb1021f82b" />
+<img width="646" height="212" alt="image" src="https://github.com/user-attachments/assets/1c29da45-88f4-4699-8df0-36fc1eea50d2" />
 
 ---
 | Шаг по времени, с \ Шаг по пространству, м | 0.1 | 0.01 | 0.001 | 0.0001 |
@@ -19,4 +20,5 @@
 | 0.0001 | | | | |
 
 **Сделать вывод.**
+
 
