@@ -97,7 +97,7 @@ Slider(40,120,200,0.01,1.0,base_fire_spread,"Распространение"),
 Slider(40,190,200,0.0,0.9,humidity,"Влажность"),
 Slider(40,260,200,0.0,0.01,tree_growth,"Рост леса"),
 Slider(40,330,200,0.0,0.001,lightning_prob,"Молния"),
-Slider(40,400,200,10,120,fps,"Скорость")
+Slider(40,400,200,10,60,fps,"Скорость")
 ]
 
 buttons=[
@@ -331,3 +331,4 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
+
