@@ -62,20 +62,19 @@ btn_yesno = tk.Button(frame1,
 btn_yesno.pack()
 
 # =============================
-# ВКЛАДКА 2 — MAGIC 8 BALL
+# ВКЛАДКА 2 — MAGIC 8 BALL (Изменил на твой алгоритм)
 # =============================
 frame2 = tk.Frame(notebook, bg="#1e1e1e")
 notebook.add(frame2, text="Magic 8-Ball")
 
-canvas = tk.Canvas(frame2, width=400, height=400,
-                   bg="#1e1e1e", highlightthickness=0)
+canvas = tk.Canvas(frame2, width=400, height=400, bg="#1e1e1e", highlightthickness=0)
 canvas.pack(pady=20)
 
 center = 200
 radius = 150
 
-# ===== Красивый шар с градиентом =====
-base_r, base_g, base_b = 110, 198, 255  # светло-голубой
+# Градиентный шар
+base_r, base_g, base_b = 110, 198, 255
 for i in range(120):
     factor = i / 120
     r = int(base_r * (1-factor) + 20*factor)
@@ -83,18 +82,12 @@ for i in range(120):
     b = int(base_b * (1-factor) + 20*factor)
     color = f"#{r:02x}{g:02x}{b:02x}"
     canvas.create_oval(center-radius+i*1.2, center-radius+i*1.2,
-                       center+radius-i*1.2, center+radius-i*1.2,
-                       fill=color, outline="")
+                      center+radius-i*1.2, center+radius-i*1.2, fill=color, outline="")
 
-# Контур
-canvas.create_oval(center-radius, center-radius,
-                   center+radius, center+radius,
-                   outline="#0a0a0a", width=4)
+canvas.create_oval(center-radius, center-radius, center+radius, center+radius, outline="#0a0a0a", width=4)
 
-# ===== Шестиугольник (вместо треугольника) =====
+# Шестиугольник
 hex_radius = 95
-hex_offset_y = -15
-
 hex_coords = []
 for i in range(6):
     angle = math.radians(60 * i - 30)
@@ -103,25 +96,17 @@ for i in range(6):
     hex_coords.extend([x, y])
 
 polygon = canvas.create_polygon(hex_coords, fill="#042E49", outline="")
+text_item = canvas.create_text(center, center, text="", fill="white", font=("Segoe UI", 14, "bold"), justify="center")
 
-# Текст для предсказания
-text_item = canvas.create_text(center, center,
-                               text="",
-                               fill="white",
-                               font=("Segoe UI", 14, "bold"),
-                               justify="center")
-
-# Варианты предсказаний обычным текстом
-answers = [
-    "Да", "Нет", "Скорее всего", "Сомнительно",
-    "Без сомнений", "Спроси позже", "Определенно да", "Маловероятно"
+# ТВОИ СОБЫТИЯ для Magic 8-Ball
+magic_answers = [
+    ("Да", 0.125), ("Нет", 0.125), ("Скорее всего", 0.125), ("Сомнительно", 0.125),
+    ("Без сомнений", 0.125), ("Спроси позже", 0.125), ("Определенно да", 0.125), ("Маловероятно", 0.125)
 ]
 
 spinning = False
-text_visible = False
-current_angle = 0  # накапливаемый угол
+current_angle = 0
 
-# Функция вращения шестиугольника
 def rotate_polygon(angle):
     coords = []
     for i in range(0, len(hex_coords), 2):
@@ -133,45 +118,45 @@ def rotate_polygon(angle):
     canvas.coords(polygon, coords)
     canvas.coords(text_item, center, center)
 
-# Анимация вращения: ровно 5 оборотов, total_steps=50
 def spin(step=0, total_steps=60):
     global current_angle, spinning
     if step < total_steps:
-        angle_per_step = (2*2*3.14159265)/total_steps
+        angle_per_step = (2*3.14159265)/total_steps
         current_angle += angle_per_step
         rotate_polygon(current_angle)
         canvas.itemconfig(text_item, text="")
         root.after(16, spin, step+1, total_steps)
     else:
-        current_angle = 0  # сброс на исходное положение
+        current_angle = 0
         rotate_polygon(current_angle)
         spinning = False
         show_prediction()
 
-# Плавное появление текста предсказания
 def fade_in(text, alpha=0):
     if alpha <= 1:
         val = int(255 * alpha)
         color = f"#{val:02x}{val:02x}{val:02x}"
-        canvas.itemconfig(text_item,
-                          text=text,
-                          fill=color,
-                          font=("Segoe UI", 14, "bold"))
+        canvas.itemconfig(text_item, text=text, fill=color, font=("Segoe UI", 14, "bold"))
         root.after(30, fade_in, text, alpha+0.08)
 
-# Показ предсказания
 def show_prediction():
     global text_visible
-    prediction = random.choice(answers)
-    fade_in(prediction)
-    text_visible = True
+    rand_val = random.random()  
+    A = 1                    
+    k = 0                       
+    
+    while True:
+        k += 1                   
+        answer_name, Pk = magic_answers[k-1]  
+        A = A - Pk              
+        
+        if A <= rand_val:        
+            fade_in(answer_name) 
+            return
 
-# Клик по шару — сразу новое предсказание
 def click_ball(event):
-    global spinning, text_visible
-    if spinning:
-        return
-    text_visible = False
+    global spinning
+    if spinning: return
     spin()
 
 canvas.bind("<Button-1>", click_ball)
