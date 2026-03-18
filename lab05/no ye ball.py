@@ -32,7 +32,14 @@ notebook = ttk.Notebook(root)
 notebook.pack(expand=True, fill="both")
 
 # =============================
-# ВКЛАДКА 1 — ДА / НЕТ
+# ОБЩИЕ СОБЫТИЯ с вероятностями
+# =============================
+yes_no_answers = [
+    ("ДА", 0.5), ("НЕТ", 0.5)
+]
+
+# =============================
+# ВКЛАДКА 1 — ДА / НЕТ (обновленный алгоритм)
 # =============================
 frame1 = tk.Frame(notebook, bg="#1e1e1e")
 notebook.add(frame1, text="Да / Нет")
@@ -44,8 +51,21 @@ result_label = tk.Label(frame1,
                         bg="#1e1e1e")
 result_label.pack(pady=80)
 
+def get_prediction(answers):
+    rand_val = random.random()  
+    A = 1                     
+    k = 0                   
+     
+    while True:
+        k += 1                 
+        answer_name, Pk = answers[k-1]  
+        A = A - Pk             
+         
+        if A <= rand_val:        
+            return answer_name
+
 def yes_no():
-    result = random.choice(["ДА", "НЕТ"])
+    result = get_prediction(yes_no_answers)
     color = "#00e676" if result == "ДА" else "#ff5252"
     result_label.config(text=result, fg=color)
 
