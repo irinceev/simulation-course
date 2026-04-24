@@ -1,4 +1,19 @@
 # Отчёт по лабораторной работе №6: Имитационное моделирование случайных величин
+---
+
+| Характеристика | Что означает | Строка в коде | Формула |
+|---|---|---|---|
+| `m_teor` | Теоретическое математическое ожидание | `m_teor = np.sum(values * probs)` | $E[X] = \sum x_i \cdot p_i$ |
+| `d_teor` | Теоретическая дисперсия | `d_teor = np.sum(values**2 * probs) - m_teor**2` | $D[X] = \sum x_i^2 \cdot p_i - (E[X])^2$ |
+| `m_emp` | Выборочное среднее | `m_emp = np.mean(samples)` | $\hat{M} = \frac{1}{N}\sum_{j=1}^{N} x_j$ |
+| `d_emp` | Выборочная дисперсия | `d_emp = np.var(samples)` | $\hat{D} = \frac{1}{N}\sum_{j=1}^{N}(x_j - \hat{M})^2$ |
+| `err_m` | Относительная погрешность среднего, % | `err_m = abs(m_emp - m_teor) / abs(m_teor) * 100` | $\delta_M = \frac{|\hat{M} - E[X]|}{|E[X]|} \cdot 100\%$ |
+| `err_d` | Относительная погрешность дисперсии, % | `err_d = abs(d_emp - d_teor) / d_teor * 100` | $\delta_D = \frac{|\hat{D} - D[X]|}{D[X]} \cdot 100\%$ |
+| `observed` | Наблюдаемые частоты каждого значения | `observed = np.array([np.sum(samples == v) for v in values])` | $n_i = \sum_{j=1}^{N} \mathbf{1}[x_j = x_i]$ |
+| `expected` | Теоретические частоты каждого значения | `expected = probs * N` | $\hat{n}_i = N \cdot p_i$ |
+| `chi_stat` | Статистика χ² | `chi_stat, _ = stats.chisquare(observed, f_exp=expected)` | $\chi^2 = \sum_{i=1}^{m}\frac{(n_i - N p_i)^2}{N p_i}$ |
+| `chi_crit` | Критическое значение χ² | `chi_crit = stats.chi2.ppf(0.95, df=len(values) - 1)` | $\chi^2_{\text{кр}} = \chi^2_{1-\alpha,\ m-1}$ |
+| `status` | Результат критерия χ² | `status = "ПРОЙДЕН" if chi_stat < chi_crit else "ОТКЛОНЕН"` | $\chi^2 < \chi^2_{\text{кр}} \Rightarrow H_0$ не отвергается |
 
 ---
 
