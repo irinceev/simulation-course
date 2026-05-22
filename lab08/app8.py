@@ -6,11 +6,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from scipy import stats
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-#  Вычислительная часть — НЕ ИЗМЕНЯЛАСЬ
-# ─────────────────────────────────────────────────────────────────────────────
-
 class PoissonFlowModel:
     def __init__(self, lambda_rate, T, num_experiments=1000):
         self.lambda_rate = lambda_rate
@@ -21,7 +16,7 @@ class PoissonFlowModel:
 
     def generate_flow(self):
         t_current = 0
-        times = []
+        times = []  # Список моментов появления событий
         while t_current < self.T:
             tau = np.random.exponential(scale=1 / self.lambda_rate)
             t_current += tau
@@ -63,12 +58,6 @@ class PoissonFlowModel:
         frequencies = counts / len(self.event_counts)
         return unique, frequencies
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-#  GUI — переработан
-# ─────────────────────────────────────────────────────────────────────────────
-
-# Цветовая схема (Material-inspired, тёмный акцент)
 CLR = {
     "bg":          "#F5F6FA",
     "surface":     "#FFFFFF",
@@ -190,10 +179,8 @@ class PoissonFlowGUI:
         self.model = None
         self._build()
 
-    # ── Построение интерфейса ──────────────────────────────────────────────
-
     def _build(self):
-        # ── Шапка ───────────────────────────────────────────────────────────
+        #  Шапка 
         header = tk.Frame(self.root, bg=CLR["accent"], height=52)
         header.pack(fill="x")
         tk.Label(
@@ -203,7 +190,7 @@ class PoissonFlowGUI:
             fg="#FFFFFF", bg=CLR["accent"],
         ).pack(side="left", padx=18, pady=14)
 
-        # ── Основная область (left panel + right panel) ───────────────────
+        #  Основная область (left panel + right panel) 
         body = tk.Frame(self.root, bg=CLR["bg"])
         body.pack(fill="both", expand=True, padx=12, pady=12)
 
@@ -218,7 +205,7 @@ class PoissonFlowGUI:
         self._build_right(right)
 
     def _build_left(self, parent):
-        # ── Карточка параметров ──────────────────────────────────────────
+        #  Карточка параметров 
         card = tk.Frame(parent, bg=CLR["surface"],
                         highlightthickness=1, highlightbackground=CLR["border"])
         card.pack(fill="x", pady=(0, 10))
@@ -255,7 +242,7 @@ class PoissonFlowGUI:
         )
         self._run_btn.pack(fill="x", ipady=9)
 
-        # ── Статус ────────────────────────────────────────────────────────
+        #  Статус 
         self._status_var = tk.StringVar(value="Введите параметры и запустите моделирование.")
         tk.Label(
             parent, textvariable=self._status_var,
@@ -263,7 +250,7 @@ class PoissonFlowGUI:
             wraplength=290, justify="left",
         ).pack(anchor="w", pady=(0, 10))
 
-        # ── Карточки метрик ───────────────────────────────────────────────
+        #  Карточки метрик 
         metrics_lbl = tk.Frame(parent, bg=CLR["bg"])
         metrics_lbl.pack(fill="x")
         tk.Label(metrics_lbl, text="Эмпирические характеристики",
@@ -284,27 +271,6 @@ class PoissonFlowGUI:
         self._card_std  .grid(row=1, column=0, sticky="nsew", padx=(0, 5))
         self._card_range.grid(row=1, column=1, sticky="nsew", padx=(5, 0))
 
-        # ── Таблица сравнения ─────────────────────────────────────────────
-        cmp = tk.Frame(parent, bg=CLR["surface"],
-                       highlightthickness=1, highlightbackground=CLR["border"])
-        cmp.pack(fill="x", pady=(12, 0))
-
-        tk.Label(cmp, text="Сравнение с теорией", font=FONT_H2,
-                 fg=CLR["text_h"], bg=CLR["surface"]).pack(anchor="w", padx=14, pady=(10, 4))
-        _sep(cmp).pack(fill="x", padx=14)
-
-        hdr = tk.Frame(cmp, bg=CLR["surface"])
-        hdr.pack(fill="x", padx=14, pady=(4, 2))
-        for col, w in [("", 22), ("Эмпир.", 9), ("Теор.", 9), ("Δ,%", 8)]:
-            tk.Label(hdr, text=col, font=("Segoe UI Semibold", 8),
-                     fg=CLR["muted"], bg=CLR["surface"],
-                     width=w, anchor="e" if col else "w").pack(side="left", padx=(0, 8))
-
-        self._row_mean = DeviationRow(cmp, "Среднее  (M)")
-        self._row_var  = DeviationRow(cmp, "Дисперсия  (D)")
-        self._row_mean.pack(fill="x", padx=14, pady=3)
-        _sep(cmp).pack(fill="x", padx=14)
-        self._row_var .pack(fill="x", padx=14, pady=(3, 10))
 
     def _build_right(self, parent):
         tk.Label(parent, text="Графики", font=FONT_H2,
@@ -342,7 +308,7 @@ class PoissonFlowGUI:
         self.canvas = FigureCanvasTkAgg(self.fig, master=plot_card)
         self.canvas.get_tk_widget().pack(fill="both", expand=True, padx=8, pady=8)
 
-    # ── Логика ─────────────────────────────────────────────────────────────
+    #  Логика 
 
     def run_simulation(self):
         try:
@@ -385,15 +351,12 @@ class PoissonFlowGUI:
         self._card_std.set(f"{st['std']:.4f}")
         self._card_range.set(f"[{st['min']},  {st['max']}]")
 
-        self._row_mean.set(st['mean'],     st['theoretical_mean'])
-        self._row_var .set(st['variance'], st['theoretical_variance'])
-
     def plot_results(self):
         """Построение графиков — логика не изменена, только стиль."""
         for ax in self.axes:
             ax.clear()
 
-        # ── График 1: Распределение числа заявок ──────────────────────────
+        #  График 1: Распределение числа заявок 
         values, frequencies = self.model.get_distribution()
         lambda_T = self.model.lambda_rate * self.model.T
         x_theor  = np.arange(0, max(values) + 5)
@@ -416,7 +379,7 @@ class PoissonFlowGUI:
         self.axes[0].legend(fontsize=8)
         self.axes[0].grid(True, alpha=0.5)
 
-        # ── График 2: Временная диаграмма потока ──────────────────────────
+        #  График 2: Временная диаграмма потока 
         if self.model.event_times:
             y_ev = np.ones(len(self.model.event_times))
             self.axes[1].scatter(
@@ -452,8 +415,6 @@ class PoissonFlowGUI:
         self.fig.tight_layout(pad=2.8)
         self.canvas.draw()
 
-
-# ─────────────────────────────────────────────────────────────────────────────
 
 def main():
     root = tk.Tk()
